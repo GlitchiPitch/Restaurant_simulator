@@ -12,6 +12,7 @@ export type RestaurantObject = {
     level: number,
     country: Country | string,
 	interior : number,
+    floor: number,
 }
 
 
@@ -52,35 +53,35 @@ export type TableDecor = RestaurantObject & {
 
 export type NpcAreas = { -- возможно сделать например для повара точки куда он может ходить, или для офика
     floor1: {
-        admin       : {Attachment},
-        hostess     : {Attachment},
-        courier     : {Attachment},
-        handyman    : {Attachment},
-        cook        : {Attachment},
-        waiter      : {Attachment},
-        npc         : {Attachment},
+        admin       : Folder,
+        hostess     : Folder,
+        courier     : Folder,
+        handyman    : Folder,
+        cook        : Folder,
+        waiter      : Folder,
+        npc         : Folder,
     }, -- points near bar
     floor2: {
-        hostess     : {Attachment},
-        waiter      : {Attachment},
-        npc         : {Attachment},
+        hostess     : Folder,
+        waiter      : Folder,
+        npc         : Folder,
     }, -- points near bar
 }
 export type SpawnPoints = {
     workerFolder: Folder,
     clientFolder: Folder,
     floor1: {
-        admin       : {Attachment},
-        hostess     : {Attachment},
-        courier     : {Attachment},
-        handyman    : {Attachment},
-        cook        : {Attachment},
-        waiter      : {Attachment},
-        client      : {Attachment},
+        admin       : Folder,
+        hostess     : Folder,
+        courier     : Folder,
+        handyman    : Folder,
+        cook        : Folder,
+        waiter      : Folder,
+        client      : Folder,
     },
     floor2: {
         -- hostess     : {Attachment},
-        waiter      : {Attachment},
+        waiter      : Folder,
     },
     
 }

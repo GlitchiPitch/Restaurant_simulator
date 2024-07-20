@@ -13,18 +13,14 @@ local restaurantObjectTypes = require(types.RestaurantObjectTypes)
 
 function loadWorkers(playerData: playerDataTypes.PlayerData)
     local restaurant = playerData.restaurant
+    print(restaurant)
     local workerList = {}
     for profession, workers in playerData.workers do
         workerList[profession] = {}
         for i, workerData in workers do
             local worker = npcModule[profession][workerData.level .. '_' .. workerData.bodyType]()
             worker.floor = 1
-            worker.model.Parent = restaurant.spawnPoints.workerFolder
-            local spawnPoint = restaurant.spawnPoints['floor' .. workerData.floor][profession][workerData.pointIndex]
-            print(spawnPoint.Name)
-            print(worker.model)
-            print(Vector3.yAxis * 5)
-            worker.model:MoveTo(spawnPoint.WorldCFrame.Position + Vector3.yAxis * 5)
+            worker:init(restaurant)
             workerList[profession][workerData.level .. '_' .. workerData.bodyType] = worker -- это переделать
         end
     end
@@ -32,7 +28,6 @@ function loadWorkers(playerData: playerDataTypes.PlayerData)
 end
 
 function loadObject(prefabs, parent, placeData, objectName, pointIndex)
-    print(prefabs, parent, placeData, objectName, pointIndex)
     local prefab = prefabs[objectName]()
     prefab.model:PivotTo(placeData[pointIndex].CFrame)
     prefab.model.Parent = parent
@@ -76,14 +71,10 @@ function loadWallDecors(playerData: playerDataTypes.PlayerData, restaurant: rest
 end
 
 function loadKitchen(playerData: playerDataTypes.PlayerData, restaurant: restaurantObjectTypes.RestaurantType)
-    print(restaurant)
     local kitchens = playerData.kitchens
     for kitchenZone, kitchenData in kitchens do
-        print(kitchenZone, kitchenData)
         kitchenZone = restaurant.kitchens[kitchenZone]
-        print(kitchenZone)
         for furnitureName, furnitureData in kitchenData.kitchenFurnitures do
-            print(furnitureName, furnitureData)
             local objectName = furnitureName .. '_' .. furnitureData.level
             local furniturePrefab = loadObject(restaurantObjectPrefabs.furnitures, kitchenZone.folder, kitchenZone.grid, objectName, furnitureData.pointIndex)
             kitchenZone.kitchenFurnitures[furnitureName] = furniturePrefab

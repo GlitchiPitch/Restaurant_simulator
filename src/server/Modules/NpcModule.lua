@@ -12,7 +12,7 @@ local npcPrefabs = ServerStorage.Npc
 
 -- make all keys to lower
 
-function newNpc(model: Model | Part, level: number, name: string, role: string, description: string, image: string) : () -> npcTypes.Npc
+function newNpc(model: Model | Part, level: number, name: string, role: string, description: string, image: string)
     return function()
         return npcBehaviorModule[string.lower(role)]:new({
             model = model:Clone(),
@@ -51,17 +51,17 @@ local handyman = newNpcList('Handyman')
 local cook = newNpcList('Cook')
 local waiter = newNpcList('Waiter')
 local critic = newNpcList('Critic')
-local clients = newNpcList('Client')
+local client = newNpcList('Client')
 local citizen = newNpcList('Citizen')
 
 return {
-    admin = admin,
-    hostess = hostess,
-    courier = courier,
-    handyman = handyman,
-    cook = cook,
-    waiter = waiter,
-    critic = critic,
-    clients = clients,
-    citizen = citizen,
+    handyman    = handyman  :: npcTypes.Handyman,
+    hostess     = hostess   :: npcTypes.Hostess,
+    courier     = courier   :: npcTypes.Courier,
+    citizen     = citizen   :: npcTypes.Npc,
+    waiter      = waiter    :: npcTypes.Waiter,
+    client      = client    :: npcTypes.Client,
+    critic      = critic    :: npcTypes.Critic,
+    admin       = admin     :: npcTypes.Admin,
+    cook        = cook      :: npcTypes.Cook,
 }

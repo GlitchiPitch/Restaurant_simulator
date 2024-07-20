@@ -62,6 +62,9 @@ function Npc:equipTool(item: gameObjectTypes.UsableItem, hand: {'Right' | 'Left'
 end
 
 function Npc:equipItems(item: gameObjectTypes.UsableItem, itemAttachment: Attachment)
+	print(self.name)
+	print(itemAttachment)
+	print(item)
 	local currentItem = itemAttachment:FindFirstChild(item.Name) :: Model | BasePart
 	if currentItem then
 		currentItem:Destroy()
@@ -73,8 +76,28 @@ function Npc:equipItems(item: gameObjectTypes.UsableItem, itemAttachment: Attach
 end
 
 function Npc:goTo(targetPoint: Attachment)
-	self.humanoid:MoveTo(targetPoint.WorldCFrame.Position)
-	self.humanoid.MoveToFinished:Wait()
+	local path = PathfindingService:CreatePath()
+	path:ComputeAsync(self.model:GetPivot().Position, targetPoint.WorldCFrame.Position)
+	local way = path:GetWaypoints()
+
+	local f = Instance.new("Folder")
+	f.Parent = workspace
+	for i, v in way do
+		local p = Instance.new("Part")
+		p.Parent = f
+		p.Anchored = true
+		p.Size = Vector3.new(1,1,1)
+		p.CanCollide = false
+		p.Position = v.Position
+	end
+
+
+	for i, w in way do
+		self.humanoid:MoveTo(w.Position)
+		self.humanoid.MoveToFinished:Wait()
+	end
+
+	f:Destroy()
 end
 
 function Npc:goToPath(targetPoint: Attachment, walkPoints: {Attachment})
@@ -90,8 +113,6 @@ function Npc:goToPath(targetPoint: Attachment, walkPoints: {Attachment})
 		p.CanCollide = false
 		p.Position = v
 	end
-
-	task.wait(3)
 
 	for i, w in path do
 		self.humanoid:MoveTo(w)
@@ -112,7 +133,6 @@ function Npc:changeState(state: string)
 		pay -- waitClient and cash icon (show rewards panel)
 	]]
 end
-
 
 function Npc:playAnimation(animation: string, timeForAction: number)
 	local animation = self.animations[animation] :: AnimationTrack

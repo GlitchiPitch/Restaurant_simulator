@@ -4,6 +4,7 @@ local types = Server.Types
 local npcTypes 	= require(types.NpcTypes)
 local utils     = require(Server.Utils)
 local Npc 		= require(Server.NpcModules.NpcBehavior)
+local restaurantObjectTypes = require(types.RestaurantObjectTypes)
 
 local Client = {}; Client.__index = Client
 setmetatable(Client, {__index = Npc})
@@ -16,6 +17,15 @@ function Client:new(properties: npcTypes.Client)
 	return self
 end
 
+function Client:init(restaurant: restaurantObjectTypes.RestaurantType, clientTable: restaurantObjectTypes.TableType, queue: number)
+	self.spawnPoint = restaurant.spawnPoints.floor1.client[1]
+	self.clientTable = clientTable
+	self.model.Parent = restaurant.spawnPoints.clientFolder
+	self.model:PivotTo(self.spawnPoint.WorldCFrame * CFrame.new(self.spawnPoint.WorldCFrame.LookVector.Unit * (queue * 2)))
+	self.queue = queue
+	self.movingArea = restaurant.npcAreas.floor1.npc
+end
+
 function Client:eat(food: Model)
 	self:changeState('Eat')
     print(self.name .. " eat " .. food.Name)
@@ -24,18 +34,19 @@ function Client:eat(food: Model)
 	self:changeState('Pay')
 end
 
-function Client:waitOrder(dishPoint: Attachment)
+function Client:waitOrder()
 	self:changeState('WaitOrder')
-	dishPoint.ChildAdded:Once(function(child)
+	self.clientTable.dishPoints[self.queue].ChildAdded:Once(function(child)
 		self:eat(child)
 	end)
 end
 
-function Client:goToTable(tablePoint: Attachment, walkPoints: {Attachment}, chairSeat: Seat)
+function Client:goToTable()
 	self:changeState('GoToTable')
-	self:goToPath(tablePoint, walkPoints)
+	local tablePoint = utils.getNearPoint(self.model, self.clientTable.npcPoints)
+	self:goToPath(tablePoint, self.movingArea)
 	self:goTo(tablePoint)
-	self:sit(chairSeat)
+	self:sit(self.clientTable.chairs[self.queue].seat)
 	self:changeState('WaitWaiter')
 end
 
@@ -54,10 +65,12 @@ function Client:pay()
 	}
 end
 
-function Client:quit(standingPoint: Attachment, exitPoint: Attachment)
+function Client:quit()
+	local standingPoint = self.clientTable.npcPoints[1]
 	self.model:MoveTo(standingPoint.WorldCFrame.Position)
 	self.humanoid.Sit = false
-	self:goTo(exitPoint)
+	self:goToPath(self.spawnPoint, self.movingArea)
+	self:goTo(self.spawnPoint)
 	self.model:Destroy()
 end
 

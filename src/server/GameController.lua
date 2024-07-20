@@ -2,14 +2,12 @@ local Server = game.ServerScriptService.Server
 
 local modules = Server.Modules
 local types = Server.Types
-local config = Server.Config
 
 local restaurantObjectTypes = require(types.RestaurantObjectTypes)
 local playerDataTypes       = require(types.PlayerDataTypes)
 local gameObjectTypes       = require(types.GameObjectTypes)
 local dataManager           = require(modules.DataManager)
 local npcModule             = require(modules.NpcModule)
-local npcTypes              = require(types.NpcTypes)
 local utils                 = require(Server.Utils)
 
 local gameObjectGenerator = require(Server.GameObjectGenerator)
@@ -55,20 +53,13 @@ end
 
 function spawnClient(freeTables: {restaurantObjectTypes.TableType})
     local currentTable = freeTables[1]
-    -- local hostess = utils.checkFreeWorkers(playerData.workers.hostess)
-    -- if not hostess then return end
     for i = 1, #currentTable.chairs do
-        local client = npcModule.clients['1_' .. math.random(4)]()
-        local spawnPoint = playerRestaurant.spawnPoints.floor1.client[1]
-        client.model.Parent = playerRestaurant.spawnPoints.clientFolder
-        client.model:PivotTo(spawnPoint.WorldCFrame * CFrame.new(spawnPoint.WorldCFrame.LookVector.Unit * (i * 2)))
-        currentTable.clients[i] = client
-
+        local client = npcModule.client['1_' .. math.random(4)]()
+        currentTable.clients[i] = client:init(playerRestaurant, currentTable, i)
         client:changeState('WaitHostess')
     end 
     actions.spawnClient = nil
     addAction('meetClient', currentTable)
-    -- actions.checkFreeTables = nil
 end
 
 function sitClient(metClients: {restaurantObjectTypes.TableType})
@@ -77,9 +68,7 @@ function sitClient(metClients: {restaurantObjectTypes.TableType})
     local currentTable = metClients[1]
     for i, client in currentTable.clients do
         threads[client.model] = task.defer(function()
-            local tablePoint = utils.getNearPoint(client, currentTable.npcPoints)
-            local chair = currentTable.chairs[i]
-            client:goToTable(tablePoint, playerRestaurant.npcAreas.floor1.npc, chair.seat)
+            client:goToTable()
             allSittingClients += 1
             if allSittingClients == #currentTable.clients then
                 addAction('takeOrder', currentTable) -- table         
@@ -94,10 +83,8 @@ function meetClient(clientGroup: {restaurantObjectTypes.TableType})
     local hostess = utils.checkFreeWorkers(playerData.workers.hostess)
     if hostess then
         local currentTable = clientGroup[1]
-        threads[hostess] = task.defer(function()
-            local greetingClientPoint = playerRestaurant.npcAreas['floor' .. hostess.floor].hostess[1] :: Attachment
-            local defaultHostessPoint = playerRestaurant.spawnPoints['floor' .. hostess.floor].hostess[1] :: Attachment           
-            hostess:meetClient(greetingClientPoint, defaultHostessPoint)
+        threads[hostess.model] = task.defer(function()
+            hostess:meetClient()
             addAction('sitClient', currentTable)
             removeAction('meetClient')
         end)
@@ -107,32 +94,20 @@ end
 function takeOrder(clientsTables: {restaurantObjectTypes.TableType})
     local waiter = utils.checkFreeWorkers(playerData.workers.waiter)
     if waiter then
-        print(waiter.name)
         local freeOrderPlaceOnBar = utils.checkFreeBarPoint(playerRestaurant.bar)
         local currentTable = clientsTables[1]
         if freeOrderPlaceOnBar and currentTable then
             removeAction('takeOrder')
-            threads[waiter] = task.defer(function()
-                local tablePoint = utils.getNearPoint(waiter, currentTable.npcPoints)
-                local clients = currentTable.clients
-                waiter:goToTable(tablePoint, playerRestaurant.npcAreas['floor' .. waiter.floor].npc)
-                waiter:takeOrder(clients)
-                
+            threads[waiter.model] = task.defer(function()
+                waiter:takeOrder(currentTable)
                 for i, client in currentTable.clients do
-                    local chair = currentTable.chairs[i]
-                    client:waitOrder(currentTable.dishPoints[chair.pointIndex])
+                    client:waitOrder()
                 end
                 -- make an order for all clients ot the table
-                local barPoint = playerRestaurant.npcAreas['floor' .. waiter.floor].waiter[1] :: Attachment
-                local defaultWaiterPoint = playerRestaurant.spawnPoints['floor' .. waiter.floor].waiter[1] :: Attachment 
-                print(barPoint.Name)
-                waiter:goToBar(barPoint, playerRestaurant.npcAreas['floor' .. waiter.floor].npc)
-
+                waiter:goToBar()
                 local order = gameObjectGenerator.newOrder(#currentTable.clients, playerData.recipes, freeOrderPlaceOnBar, currentTable)
                 order.spawnOrder()
-
                 addAction('cooking', order)
-                waiter:goToPath(defaultWaiterPoint, playerRestaurant.npcAreas['floor' .. waiter.floor].npc)
                 waiter:changeState('Free')
             end)
         end
@@ -143,27 +118,22 @@ function cooking(orders: {gameObjectTypes.Order})
     local cook = utils.checkFreeWorkers(playerData.workers.cook)
     local playerIngredients
     local currentOrder
-    local freeKitchen
     local playerHasIngredients
-    local defaultCookPoint
     -- check free kitchens
     if cook then
         -- print(cook.name)
         playerIngredients = playerData.ingredients
         currentOrder = orders[1]
-        freeKitchen = utils.checkFreeKitchens(playerRestaurant.kitchens)
         playerHasIngredients = utils.checkPlayerIngredients(playerIngredients, currentOrder.recipes)
-        defaultCookPoint = playerRestaurant.spawnPoints['floor' .. cook.floor].cook[1] :: Attachment 
-        if currentOrder and freeKitchen and playerHasIngredients then  
-            threads[cook] = task.defer(function()
+        if currentOrder and playerHasIngredients then  
+            threads[cook.model] = task.defer(function()
                 currentOrder.orderTicket:Destroy()
-                freeKitchen.currentCook = cook
                 currentOrder.waiterPlate = gameObjectGenerator.spawnWaiterPlatePrefab(currentOrder.orderPlacePoint)
                 for recipeIndex, recipe in currentOrder.recipes do
                     for k, v in recipe.ingredients do
                         playerIngredients[v.ingredient.name] -= v.amount
                         for j, h in v.cookAction do
-                            cook[h](cook, freeKitchen, v.ingredient.model)
+                            cook[h](cook, v.ingredient.model)
                         end
                     end
                     currentOrder.addDishToBar(currentOrder.waiterPlate, recipeIndex)
@@ -184,12 +154,11 @@ function cooking(orders: {gameObjectTypes.Order})
                 
                 removeAction('cooking')
                 
-                freeKitchen.currentCook = nil
-                cook:goTo(defaultCookPoint)
+                cook:goTo(cook.spawnPoint)
                 cook:changeState('Free')
             end)
         else
-            warn(`playerIngredients {playerIngredients} \ currentOrder {currentOrder}  freeKitchen {freeKitchen} \ playerHasIngredients {playerHasIngredients} \ defaultCookPoint {defaultCookPoint}`)        
+            warn(`playerIngredients {playerIngredients} \ currentOrder {currentOrder} \ playerHasIngredients {playerHasIngredients}`)        
         end
     end
 
@@ -203,7 +172,7 @@ end
 function giveOrder(orders: {gameObjectTypes.Order})
     local waiter = utils.checkFreeWorkers(playerData.workers.waiter)
     if waiter then
-        threads[waiter] = task.defer(function()
+        threads[waiter.model] = task.defer(function()
             local barPoint = playerRestaurant.npcAreas['floor' .. waiter.floor].waiter[1] :: Attachment
             local currentOrder = orders[1]
             waiter:giveOrder(barPoint, currentOrder)
@@ -219,28 +188,24 @@ end
 function quitClient(orderingTables: {restaurantObjectTypes.TableType})
     local waiter = utils.checkFreeWorkers(playerData.workers.waiter)
     if waiter then
-        threads[waiter] = task.defer(function()
+        threads[waiter.model] = task.defer(function()
             local payingTable = orderingTables[1]
-            local tablePoint = utils.getNearPoint(waiter, payingTable.npcPoints)
-            waiter:getCash(tablePoint)
-            removeAction('quitClient')
+            waiter:getCash(payingTable)
+            -- removeAction('quitClient')
             for j, client in payingTable.clients do
                 if client.state == 'Pay' then
                     -- add curency
                     threads[client.model] = task.defer(function()
                         local currency = client:pay()
                         print(currency)
-                        local exitPoint = playerRestaurant.npcAreas.floor1.client[1] :: Attachment
-                        local standingPoint = payingTable.npcPoints[1]
-                        client:quit(standingPoint, exitPoint)
+                        client:quit()
                     end)
                 end
             end
             if #payingTable.clients == 0 then
                 removeAction('quitClient')
             end    
-            local defaultWaiterPoint = playerRestaurant.spawnPoints['floor' .. waiter.floor].waiter[1] :: Attachment 
-            waiter:goTo(defaultWaiterPoint)
+            waiter:goTo(waiter.spawnPoint)
             waiter:changeState('Free')
         end)
     end
@@ -251,9 +216,9 @@ local actionsList = {
     spawnClient = spawnClient,
     meetClient = meetClient,
     takeOrder = takeOrder,
-    -- cooking = cooking,
-    -- giveOrder = giveOrder,
-    -- quitClient = quitClient,
+    cooking = cooking,
+    giveOrder = giveOrder,
+    quitClient = quitClient,
     checkFreeTables = checkFreeTables,
     sitClient = sitClient,
     -- check admin for creating delivery order

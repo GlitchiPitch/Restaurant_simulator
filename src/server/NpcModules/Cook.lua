@@ -1,8 +1,9 @@
-local ServerScriptService = game.ServerScriptService
-local types = ServerScriptService.Server.Types
+local Server = game.ServerScriptService.Server
+local types = Server.Types
 local npcTypes = require(types.NpcTypes)
 local restaurantObjectTypes = require(types.RestaurantObjectTypes)
-local Npc = require(ServerScriptService.Server.NpcModules.NpcBehavior)
+local Npc = require(Server.NpcModules.NpcBehavior)
+local utils = require(Server.Utils)
 
 local Cook = {}; Cook.__index = Cook
 setmetatable(Cook, {__index = Npc})
@@ -19,65 +20,75 @@ function Cook:new(properties: npcTypes.Cook)
 	return self
 end
 
-function Cook:goToTheKitchen(kitchen: restaurantObjectTypes.KitchenType, currentFurnitureName: string)
+function Cook:init(restaurant: restaurantObjectTypes.RestaurantType)
+	self.kitchen = utils.checkFreeKitchens(restaurant.kitchens)
+	self.kitchen.currentCook = self
+	self.spawnPoint = restaurant.spawnPoints['floor' .. self.floor].cook[1] :: Attachment
+	self.model.Parent = restaurant.spawnPoints.workerFolder
+	self.model:PivotTo(self.spawnPoint.WorldCFrame)
+end
+
+function Cook:goToTheKitchen(currentFurnitureName: string)
 	self:changeState('Cooking')
-    local currentFurniture = kitchen.kitchenFurnitures[currentFurnitureName]
+    local currentFurniture = self.kitchen.kitchenFurnitures[currentFurnitureName]
+	print(currentFurniture)
     self:goTo(currentFurniture.npcPoint)
 end
 
-function Cook:setupCurrentKitchenItems(kitchen: restaurantObjectTypes.KitchenType, currentFurnitureName: string, item: Model)
-    local currentFurniture = kitchen.kitchenFurnitures[currentFurnitureName]
-    self:equipItems(item, currentFurniture.ItemPoint)
+function Cook:setupCurrentKitchenItems(currentFurnitureName: string, item: Model)
+    local currentFurniture = self.kitchen.kitchenFurnitures[currentFurnitureName]
+	print(currentFurniture)
+    self:equipItems(item, currentFurniture.itemPoint)
 end
 
-function Cook:slicing(kitchen: restaurantObjectTypes.KitchenType, ingredient: Model)
-    self:goToTheKitchen(kitchen, 'workingTable')
+function Cook:slicing(ingredient: Model)
+    self:goToTheKitchen('workingTable')
     -- print(`{self.name} {self.role} slicing`)
     -- self:equipTool()
-    self:setupCurrentKitchenItems(kitchen, 'workingTable', ingredient)
+    self:setupCurrentKitchenItems('workingTable', ingredient)
     self:doAction('slicing', self.slicingTime)
-    self:setupCurrentKitchenItems(kitchen, 'workingTable', ingredient)
+    self:setupCurrentKitchenItems('workingTable', ingredient)
     -- self:equipTool()
     -- print(`{self.name} {self.role} slicing is done`)
     
 end
 
-function Cook:boiling(kitchen: restaurantObjectTypes.KitchenType, ingredient: Model)
-    self:goToTheKitchen(kitchen, 'stove')
+function Cook:boiling(ingredient: Model)
+    self:goToTheKitchen('stove')
     -- print(`{self.name} {self.role} boiling`)
     -- self:equipTool()
-    self:setupCurrentKitchenItems(kitchen, 'stove', ingredient)
+    self:setupCurrentKitchenItems('stove', ingredient)
     self:doAction('boiling', self.boilingTime)
-    self:setupCurrentKitchenItems(kitchen, 'stove', ingredient)
+    self:setupCurrentKitchenItems('stove', ingredient)
     -- self:equipTool()
     -- print(`{self.name} {self.role} boiling is done`)
     
 end
 
-function Cook:frying(kitchen: restaurantObjectTypes.KitchenType, ingredient: Model)
-    self:goToTheKitchen(kitchen, 'stove')
+function Cook:frying(ingredient: Model)
+    self:goToTheKitchen('stove')
     -- print(`{self.name} {self.role} frying`)
     -- self:equipTool()
-    self:setupCurrentKitchenItems(kitchen, 'stove', ingredient)
+    self:setupCurrentKitchenItems('stove', ingredient)
     self:doAction('frying', self.fryingTime)
-    self:setupCurrentKitchenItems(kitchen, 'stove', ingredient)
+    self:setupCurrentKitchenItems('stove', ingredient)
     -- self:equipTool()
     -- print(`{self.name} {self.role} frying is done`)
     
 end
 
-function Cook:washing(kitchen: restaurantObjectTypes.KitchenType, ingredient: Model)
-    self:goToTheKitchen(kitchen, 'sink')
+function Cook:washing(ingredient: Model)
+    self:goToTheKitchen('sink')
     -- print(`{self.name} {self.role} washing`)
-    self:setupCurrentKitchenItems(kitchen, 'sink', ingredient)
+    self:setupCurrentKitchenItems('sink', ingredient)
     self:doAction('washing', self.washingTime)
-    self:setupCurrentKitchenItems(kitchen, 'sink', ingredient)
+    self:setupCurrentKitchenItems('sink', ingredient)
     -- print(`{self.name} {self.role} washing is done`)
     
 end
 
-function Cook:fridge(kitchen: restaurantObjectTypes.KitchenType)
-    self:goToTheKitchen(kitchen, 'fridge')
+function Cook:fridge()
+    self:goToTheKitchen('fridge')
     -- print(`{self.name} {self.role} fridge`)
     self:doAction('fridge') -- self.fridgeTime
     -- print(`{self.name} {self.role} fridge is done`)

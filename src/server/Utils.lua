@@ -39,6 +39,12 @@ function checkFreeKitchens(kitchensData: restaurantObjectTypes.KitchensType)
 	end
 end
 
+function checkFreeSpawnPoints(restaurant: restaurantObjectTypes.RestaurantType, floor: number, profession: string)
+	for i, point in restaurant.spawnPoints['floor' .. floor][profession] do
+		return
+	end
+end
+
 function checkPlayerIngredients(ingredientsData: playerDataTypes.Ingredients, orderRecipes: {gameObjectTypes.Recipe})
 	local neededIngredients: {[string]: number} = {}
 	for i, recipe in orderRecipes do

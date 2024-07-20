@@ -32,10 +32,18 @@ export type AnimationsConfigType = {
 
 export type Client = Npc & {
     moodLevel: Frame,
-    
 }
 
-export type Cook = Npc & {
+export type Critic = Npc
+
+export type Worker = Npc & {
+    floor: number,
+    bodyType: number,
+    pointIndex: number,
+}
+
+
+export type Cook = Worker & {
     slicingTime: number,
     boilingTime: number,
     washingTime: number,
@@ -43,17 +51,14 @@ export type Cook = Npc & {
     fryingTime: number,
 }
 
-export type Waiter = Npc & {
 
-}
+export type Waiter = Worker
+export type Admin = Worker
+export type Courier = Worker
+export type Handyman = Worker
 
-export type Hostess = Npc
 
-export type Worker = Npc & {
-    floor: number,
-    bodyType: number,
-    pointIndex: number,
-}
+export type Hostess = Worker
 
 export type WorkerList = {
     handyman    : {Worker},
