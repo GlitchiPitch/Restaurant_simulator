@@ -1,4 +1,4 @@
-local ServerScriptService = game:GetService("ServerScriptService")
+local ServerScriptService = game.ServerScriptService
 local animationsFolder = ServerScriptService.Server.Animations
 
 return {
@@ -11,4 +11,6 @@ return {
     waiter      = require(animationsFolder.Waiter),
     npc         = require(animationsFolder.Npc),
     citizen     = require(animationsFolder.Citizen),
+    critic      = require(animationsFolder.Critic),
+    ivlev       = require(animationsFolder.Ivlev),
 }

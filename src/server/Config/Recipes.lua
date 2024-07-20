@@ -9,7 +9,7 @@ local recipesModules = config.RecipesModules
 local iconsImage = {
 	[info.COUNTRY.europe]	= uiTypes.newImage('rbxassetid://17891471779'),
 	[info.COUNTRY.caucasus]	= uiTypes.newImage('rbxassetid://17891476946'),
-	[info.COUNTRY.italia]	= uiTypes.newImage('rbxassetid://17891474735'),
+	[info.COUNTRY.italy]	= uiTypes.newImage('rbxassetid://17891474735'),
 	[info.COUNTRY.russia]	= uiTypes.newImage('rbxassetid://17891409485'),
 	[info.COUNTRY.panasia]	= uiTypes.newImage('rbxassetid://17891468141'),
 }

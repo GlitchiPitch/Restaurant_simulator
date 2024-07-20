@@ -2,12 +2,19 @@ local ServerScriptService = game:GetService("ServerScriptService")
 local types = ServerScriptService.Server.Types
 local npcTypes = require(types.NpcTypes)
 -- maybe add image and merge to one type like a basicInfoOfType
+export type Country = "Russia" | "Italy" | "Panasia" | "Caucasus" | "Europe"
+
 export type RestaurantObject = {
-    model: Model | MeshPart | Folder,
-    level: number,
     name: string,
-    country: string,
+    model: Model | MeshPart | Folder,
+    price : number,
+	image : string,
+    level: number,
+    country: Country | string,
+	interior : number,
 }
+
+
 
 export type DecorType = RestaurantObject & {} 
 export type ChairType = RestaurantObject & {
@@ -16,11 +23,13 @@ export type ChairType = RestaurantObject & {
 }
 
 export type KitchenFurnitureType = RestaurantObject & {
-    itemAttachment: Attachment,
+    itemPoint: Attachment,
     npcPoint: Attachment,
     pointIndex: number,
+    -- hitbox: Part,
+    -- unitType : Types.kitchenUnitType?
 }
-export type KitchensZones = 'open1' | 'close1'
+export type KitchensZones = 'opened' | 'closed'
 
 export type TableType = RestaurantObject & {
     chairFolder: Folder,
@@ -37,24 +46,43 @@ export type WallDecorType = RestaurantObject & {
     pointIndex: number,
 }
 
-export type WorkerAreas = { -- возможно сделать например для повара точки куда он может ходить, или для офика
-    admin:      {Attachment},
-    hostess:    {Attachment},
-    courier:    {Attachment},
-    handyman:   {Attachment},
-    cook:       {Attachment},
-    waiter:     {Attachment}, -- points near bar
+export type TableDecor = RestaurantObject & {
+    pointIndex: number,
+}
+
+export type NpcAreas = { -- возможно сделать например для повара точки куда он может ходить, или для офика
+    floor1: {
+        admin       : {Attachment},
+        hostess     : {Attachment},
+        courier     : {Attachment},
+        handyman    : {Attachment},
+        cook        : {Attachment},
+        waiter      : {Attachment},
+        npc         : {Attachment},
+    }, -- points near bar
+    floor2: {
+        hostess     : {Attachment},
+        waiter      : {Attachment},
+        npc         : {Attachment},
+    }, -- points near bar
 }
 export type SpawnPoints = {
     workerFolder: Folder,
     clientFolder: Folder,
-    admin:      {Attachment},
-    hostess:    {Attachment},
-    courier:    {Attachment},
-    handyman:   {Attachment},
-    cook:       {Attachment},
-    waiter:     {Attachment},
-    client:     {Attachment},
+    floor1: {
+        admin       : {Attachment},
+        hostess     : {Attachment},
+        courier     : {Attachment},
+        handyman    : {Attachment},
+        cook        : {Attachment},
+        waiter      : {Attachment},
+        client      : {Attachment},
+    },
+    floor2: {
+        -- hostess     : {Attachment},
+        waiter      : {Attachment},
+    },
+    
 }
 
 export type KitchenType = {
@@ -70,15 +98,15 @@ export type KitchenType = {
 }
 
 export type WallFloorDecorsType = {
-    folder: Folder,
-    grid:   {Part},
-    decors: {WallDecorType},
+    folder  : Folder,
+    grid    : {Part},
+    decors  : {WallDecorType},
 }
 
 export type FloorTablesType = {
-    folder: Folder,
-    grid:   {Part},
-    tables: {TableType},
+    folder  : Folder,
+    grid    : {Part},
+    tables  : {TableType},
 }
 
 export type KitchensType = {
@@ -96,12 +124,13 @@ export type TablesType = {
 }
 
 export type RestaurantType = RestaurantObject & Folder & {
-    workerAreas:    WorkerAreas,
-    spawnPoints:    SpawnPoints,
-    kitchens:       KitchensType,
-    wallDecors:     WallDecors,
-    tables:         TablesType,
-    bar:            {Attachment},
+    npcAreas     : NpcAreas,
+    spawnPoints     : SpawnPoints,
+    wallDecors      : WallDecors,
+    ivlevPoint      : Attachment,
+    kitchens        : KitchensType,
+    tables          : TablesType,
+    bar             : {Attachment},
 }
 
 return true

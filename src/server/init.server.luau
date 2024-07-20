@@ -1,9 +1,10 @@
 local Players = game:GetService("Players")
-local modules = script.Modules
+local Server = script
+local modules = Server.Modules
 
 local dataManager = require(modules.DataManager)
-local contentLoader = require(modules.ContentLoader)
-local gameContoller = require(script.GameController)
+local contentLoader = require(Server.ContentLoader)
+local gameContoller = require(Server.GameController)
 
 function onPlayerAdded(player: Player)
     dataManager.initData(player)

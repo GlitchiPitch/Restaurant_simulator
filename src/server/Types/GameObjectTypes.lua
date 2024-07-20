@@ -18,19 +18,14 @@ export type InteractableOrder = {
     onClick: () -> (),
 }
 
-export type BarOrder = {
-
-}
-
 export type Order = {
     recipes: {Recipe},
     orderTicket : Model | BasePart,
     orderPlacePoint: Attachment,
     orderingTable: restaurantObjectTypes.TableType,
-    waiterPlate: MeshPart,
+    waiterPlate: Model | MeshPart,
     spawnOrder: () -> (),
     addDishToBar: (waiterPlate: MeshPart & {Attachment}, recipeIndex: number) -> (),
-    placeDish: (dish: Model, tablePoint: Attachment) -> (),
 }
 
 export type Ingredient = BasicInfo & {

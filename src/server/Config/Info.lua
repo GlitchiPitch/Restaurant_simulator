@@ -2,7 +2,7 @@ local COUNTRY = table.freeze({
 	panasia		= 'panasia', -- паназия
 	europe		= 'europe', -- европа
 	russia		= 'russia', -- россия
-	italia		= 'italia', -- италия
+	italy		= 'italia', -- италия
 	caucasus	= 'caucasus', -- кавказ
 })
 

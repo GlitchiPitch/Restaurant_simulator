@@ -2,11 +2,11 @@ local StarterGui = game:GetService("StarterGui")
 local StarterPlayer = game:GetService("StarterPlayer")
 local Client = StarterPlayer.StarterPlayerScripts.Client
 
-local cookingGui = StarterGui.Cooking
+-- local cookingGui = StarterGui.Cooking
 
-local cookingGame = require(Client.CookingGame)
+-- local cookingGame = require(Client.CookingGame)
 
-cookingGame.init(cookingGui)
+-- cookingGame.init(cookingGui)
 
 --[[
 

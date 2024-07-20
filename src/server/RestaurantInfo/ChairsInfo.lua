@@ -1,0 +1,147 @@
+--!strict
+local Server = game.ServerScriptService.Server
+local types = Server.Types
+local config = Server.Config
+
+local restaurantObjectTypes = require(types.RestaurantObjectTypes)
+local info = require(config.Info)
+
+local Config : {[string] : restaurantObjectTypes.ChairType} = {
+	as_1 = {
+		name = 'Спящий дракон',
+		price = 1000,
+		interior = 30,
+		image = "rbxassetid://17804200462",
+		level = 1,
+		-- layoutOrder = 1,
+		country = info.COUNTRY.panasia,
+	},	
+	-- as_2 = {
+	-- 	name = 'Глаз орхидеи',
+	-- 	price = 1000,
+	-- 	interior = 30,
+	-- 	image = "rbxassetid://17804304265",
+	-- 	level = 1,
+	-- 	-- layoutOrder = 2,
+	-- 	country = info.COUNTRY.panasia,
+	-- },
+	-- as_3 = {
+	-- 	name = 'Сон хризантемы',
+	-- 	price = 1000,
+	-- 	interior = 30,
+	-- 	image = "rbxassetid://17804304047",
+	-- 	level = 1,
+	-- 	-- layoutOrder = 3,
+	-- 	country = info.COUNTRY.panasia,
+	-- },
+	-- eu_1 = {
+	-- 	name = 'Летняя ночь',
+	-- 	price = 1000,
+	-- 	interior = 30,
+	-- 	image = "rbxassetid://17804807551",
+	-- 	level = 1,
+	-- 	-- layoutOrder = 4,
+	-- 	country = info.COUNTRY.europe,
+	-- },
+	-- eu_2 = {
+	-- 	name = 'Снежная вершина',
+	-- 	price = 1000,
+	-- 	interior = 30,
+	-- 	image = "rbxassetid://17804797800",
+	-- 	level = 1,
+	-- 	-- layoutOrder = 5,
+	-- 	country = info.COUNTRY.europe,
+	-- },
+	-- eu_3 = {
+	-- 	name = 'Плеск волны',
+	-- 	price = 1000,
+	-- 	interior = 30,
+	-- 	image = "rbxassetid://17804797698",
+	-- 	level = 1,
+	-- 	-- layoutOrder = 6,
+	-- 	country = info.COUNTRY.europe,
+	-- },
+	-- ru_1 = {
+	-- 	name = 'Крыло филина',
+	-- 	price = 1000,
+	-- 	interior = 30,
+	-- 	image = "rbxassetid://17804891324",
+	-- 	level = 1,
+	-- 	-- layoutOrder = 7,
+	-- 	country = info.COUNTRY.russia,
+	-- },
+	-- ru_2 = {
+	-- 	name = 'Мягкое облако',
+	-- 	price = 1000,
+	-- 	interior = 30,
+	-- 	image = "rbxassetid://17804891082",
+	-- 	level = 1,
+	-- 	-- layoutOrder = 8,
+	-- 	country = info.COUNTRY.russia,
+	-- },
+	-- ru_3 = {
+	-- 	name = 'Зимний сад',
+	-- 	price = 1000,
+	-- 	interior = 30,
+	-- 	image = "rbxassetid://17804890800",
+	-- 	level = 1,
+	-- 	-- layoutOrder = 9,
+	-- 	country = info.COUNTRY.russia,
+	-- },
+	-- it_1 = {
+	-- 	name = 'Признательность',
+	-- 	price = 1000,
+	-- 	interior = 30,
+	-- 	image = "rbxassetid://17804850406",
+	-- 	level = 1,
+	-- 	-- layoutOrder = 10,
+	-- 	country = info.COUNTRY.italy,
+	-- },
+	-- it_2 = {
+	-- 	name = 'Ретроспектива',
+	-- 	price = 1000,
+	-- 	interior = 30,
+	-- 	image = "rbxassetid://17804850215",
+	-- 	level = 1,
+	-- 	-- layoutOrder = 11,
+	-- 	country = info.COUNTRY.italy,
+	-- },
+	-- it_3 = {
+	-- 	name = 'Стильная линия',
+	-- 	price = 1000,
+	-- 	interior = 30,
+	-- 	image = "rbxassetid://17804850047",
+	-- 	level = 1,
+	-- 	-- layoutOrder = 12,
+	-- 	country = info.COUNTRY.italy,
+	-- },
+	-- ca_1 = {
+	-- 	name = 'Вечерняя тень',
+	-- 	price = 1000,
+	-- 	interior = 30,
+	-- 	image = "rbxassetid://17804761778",
+	-- 	level = 1,
+	-- 	-- layoutOrder = 13,
+	-- 	country = info.COUNTRY.caucasus,
+	-- },
+	-- ca_2 = {
+	-- 	name = 'Горный цветок',
+	-- 	price = 1000,
+	-- 	interior = 30,
+	-- 	image = "rbxassetid://17804761556",
+	-- 	level = 1,
+	-- 	-- layoutOrder = 14,
+	-- 	country = info.COUNTRY.caucasus,
+	-- },
+	-- ca_3 = {
+	-- 	name = 'Овечий пастух',
+	-- 	price = 1000,
+	-- 	interior = 30,
+	-- 	image = "rbxassetid://17804761376",
+	-- 	level = 1,
+	-- 	-- layoutOrder = 15,
+	-- 	country = info.COUNTRY.caucasus,
+	-- }
+}
+
+return Config

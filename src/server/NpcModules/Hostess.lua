@@ -13,13 +13,12 @@ function Hostess:new(properties: npcTypes.Npc)
 	setmetatable(self, Hostess)
 	return self
 end
-function Hostess:meetClient(greetingClientPoint: Attachment, spawnPoint: Attachment)
-	self.state = 'meetClient'
-    self:goTo(greetingClientPoint)
-	self.humanoid.MoveToFinished:Wait()
+function Hostess:meetClient(greetingClientPoint: Attachment, defaultHostessPoint: Attachment)
+	self:changeState('MeetClient')
+	self:goTo(greetingClientPoint)
 	self:doAction('meetClient', self.greetingTime)
-	self:goTo(spawnPoint)
-	self.state = 'Free'
+	self:goTo(defaultHostessPoint)
+	self:changeState('Free')
 end
 
 return Hostess

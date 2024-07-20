@@ -39,7 +39,7 @@ local defaultData: PlayerData = {
         name = 'rest1',
         level = 1,
         kitchens = {
-            open1 = {
+            opened = {
                 kitchenFurnitures = {
                     fridge = {
                         level = 1,
@@ -49,7 +49,7 @@ local defaultData: PlayerData = {
                         level = 1,
                         pointIndex = 1,
                     },
-                    workingTable = {
+                    working_table = {
                         level = 1,
                         pointIndex = 3,
                     },
@@ -59,7 +59,7 @@ local defaultData: PlayerData = {
                     },
                 },
             },
-            close1 = {
+            closed = {
                 kitchenFurnitures = {
                     fridge = {
                         level = 1,
@@ -69,7 +69,7 @@ local defaultData: PlayerData = {
                         level = 1,
                         pointIndex = 1,
                     },
-                    workingTable = {
+                    working_table = {
                         level = 1,
                         pointIndex = 3,
                     },
@@ -80,109 +80,104 @@ local defaultData: PlayerData = {
                 },
             },
         },
-        wallDecors = {
+        wallDecor = {
             floor1 = {
                 {
-                    name = 'part',
+                    country = 'ru',
                     level = 1,
                     pointIndex = 1,
                 },
                 {
-                    name = 'part',
+                    country = 'ru',
                     level = 1,
                     pointIndex = 2,
                 },
             },
             floor2 = {
                 {
-                    name = 'part',
+                    country = 'ca',
                     level = 1,
                     pointIndex = 1,
-                },
-                {
-                    name = 'part',
-                    level = 1,
-                    pointIndex = 2,
                 },
             }
         },
         tables = {
             floor1 = {
                 {
-                    level = 1,
-                    country = 'table',
+                    level = 3,
+                    country = 'ru',
                     chairs = {
                         {
-                            country = 'chair',
+                            country = 'as',
                             level = 1,
                             pointIndex = 1,
                         },
 
                         {
-                            country = 'chair',
+                            country = 'as',
                             level = 1,
                             pointIndex = 2,
                         }
                     },
                     pointIndex = 1,
                 },
-                {
-                    level = 1,
-                    country = 'table',
-                    chairs = {
-                        {
-                            country = 'chair',
-                            level = 1,
-                            pointIndex = 1,
-                        },
+                -- {
+                --     level = 3,
+                --     country = 'ru',
+                --     chairs = {
+                --         {
+                --             country = 'as',
+                --             level = 1,
+                --             pointIndex = 1,
+                --         },
 
-                        {
-                            country = 'chair',
-                            level = 1,
-                            pointIndex = 2,
-                        }
-                    },
-                    pointIndex = 2,
-                },
+                --         {
+                --             country = 'as',
+                --             level = 1,
+                --             pointIndex = 2,
+                --         }
+                --     },
+                --     pointIndex = 2,
+                -- },
             },
-            floor2 = {
-                {
-                    level = 1,
-                    country = 'table',
-                    chairs = {
-                        {
-                            country = 'chair',
-                            level = 1,
-                            pointIndex = 1,
-                        },
+            -- floor2 = {
+            --     {
+            --         level = 1,
+            --         country = 'table',
+            --         chairs = {
+            --             {
+            --                 country = 'chair',
+            --                 level = 1,
+            --                 pointIndex = 1,
+            --             },
 
-                        {
-                            country = 'chair',
-                            level = 1,
-                            pointIndex = 2,
-                        }
-                    },
-                    pointIndex = 1,
-                },
-                {
-                    level = 1,
-                    country = 'table',
-                    chairs = {
-                        {
-                            country = 'chair',
-                            level = 1,
-                            pointIndex = 1,
-                        },
+            --             {
+            --                 country = 'chair',
+            --                 level = 1,
+            --                 pointIndex = 2,
+            --             }
+            --         },
+            --         pointIndex = 1,
+            --     },
+            --     {
+            --         level = 1,
+            --         country = 'table',
+            --         chairs = {
+            --             {
+            --                 country = 'chair',
+            --                 level = 1,
+            --                 pointIndex = 1,
+            --             },
 
-                        {
-                            country = 'chair',
-                            level = 1,
-                            pointIndex = 2,
-                        }
-                    },
-                    pointIndex = 2,
-                },
-            }
+            --             {
+            --                 country = 'chair',
+            --                 level = 1,
+            --                 pointIndex = 2,
+            --             }
+            --         },
+            --         pointIndex = 2,
+            --     },
+            -- }
         }
     },
     
@@ -196,7 +191,12 @@ local defaultData: PlayerData = {
 
     workers = {
         hostess = {
-            '1_1',
+            {
+                floor = 1,
+                bodyType = 1,
+                level = 1,
+                pointIndex = 1,
+            }
         },
         -- admin = {
         --     '1_2',
@@ -208,10 +208,20 @@ local defaultData: PlayerData = {
         --     '1_1',
         -- },
         cook = {
-            '1_1',
+            {
+                floor = 1,
+                bodyType = 1,
+                level = 1,
+                pointIndex = 1,
+            },
         },
         waiter = {
-            '1_1',
+            {
+                floor = 1,
+                bodyType = 1,
+                level = 1,
+                pointIndex = 1, 
+            },
         },
     },
 

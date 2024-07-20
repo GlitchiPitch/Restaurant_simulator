@@ -41,11 +41,8 @@ end
 
 function checkPlayerIngredients(ingredientsData: playerDataTypes.Ingredients, orderRecipes: {gameObjectTypes.Recipe})
 	local neededIngredients: {[string]: number} = {}
-	print(orderRecipes)
 	for i, recipe in orderRecipes do
-		print(recipe)
 		for i, ingredientData in recipe.ingredients do
-			print(ingredientData)
 			if neededIngredients[ingredientData.ingredient.name] ~= nil then
 				neededIngredients[ingredientData.ingredient.name] += ingredientData.ingredient.amount
 			else
@@ -53,7 +50,6 @@ function checkPlayerIngredients(ingredientsData: playerDataTypes.Ingredients, or
 			end
 		end
 	end
-	print(ingredientsData)
 	for ingredientName, ingredientAmount in neededIngredients do
 		if ingredientsData[ingredientName] < ingredientAmount then
 			return false

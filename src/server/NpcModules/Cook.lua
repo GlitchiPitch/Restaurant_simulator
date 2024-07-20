@@ -20,14 +20,14 @@ function Cook:new(properties: npcTypes.Cook)
 end
 
 function Cook:goToTheKitchen(kitchen: restaurantObjectTypes.KitchenType, currentFurnitureName: string)
+	self:changeState('Cooking')
     local currentFurniture = kitchen.kitchenFurnitures[currentFurnitureName]
     self:goTo(currentFurniture.npcPoint)
-    self.humanoid.MoveToFinished:Wait()
 end
 
 function Cook:setupCurrentKitchenItems(kitchen: restaurantObjectTypes.KitchenType, currentFurnitureName: string, item: Model)
     local currentFurniture = kitchen.kitchenFurnitures[currentFurnitureName]
-    self:equipItems(item, currentFurniture.itemAttachment)
+    self:equipItems(item, currentFurniture.ItemPoint)
 end
 
 function Cook:slicing(kitchen: restaurantObjectTypes.KitchenType, ingredient: Model)

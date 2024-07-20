@@ -1,10 +1,13 @@
-local BadgeService = game:GetService("BadgeService")
-local ServerScriptService = game.ServerScriptService
-local types = ServerScriptService.Server.Types
+local PathfindingService = game:GetService("PathfindingService")
+
+local Server = game.ServerScriptService.Server
+local modules = Server.Modules
+local types = Server.Types
+
 local npcTypes = require(types.NpcTypes)
 local gameObjectTypes = require(types.GameObjectTypes)
-
-local animations = require(ServerScriptService.Server.Animations.Animations)
+local pathFinding = require(modules.Path)
+local animations = require(Server.Animations.Animations)
 
 local Npc = {}; Npc.__index = Npc
 
@@ -33,18 +36,18 @@ function Npc:new(properties: npcTypes.Npc)
 end
 
 function Npc:init()
+	self.humanoid.WalkSpeed = 12
     self.model.Name = self.name
     for animationName, animationData in animations.npc do
         self.animations[animationName] = animationData
     end
 end
 
-function Npc:sit()
-	print(self.name .. " seated")
+function Npc:sit(seat: Seat)
+	seat:Sit(self.humanoid)
 end
 
 function Npc:equipTool(item: gameObjectTypes.UsableItem, hand: {'Right' | 'Left'})
-	print(item)
 	local currentItem = self.model:FindFirstChild(item.Name) :: Model | BasePart
 	if currentItem then
 		currentItem:Destroy()
@@ -70,8 +73,46 @@ function Npc:equipItems(item: gameObjectTypes.UsableItem, itemAttachment: Attach
 end
 
 function Npc:goTo(targetPoint: Attachment)
-    self.humanoid:MoveTo(targetPoint.WorldCFrame.Position)
+	self.humanoid:MoveTo(targetPoint.WorldCFrame.Position)
+	self.humanoid.MoveToFinished:Wait()
 end
+
+function Npc:goToPath(targetPoint: Attachment, walkPoints: {Attachment})
+	local wayPoints = pathFinding.getPositionsFromAttachments(walkPoints)
+	local path = pathFinding.getPath(self.model:GetPivot().Position, targetPoint.WorldCFrame.Position, wayPoints)
+	local f = Instance.new("Folder")
+	f.Parent = workspace
+	for i, v in path do
+		local p = Instance.new("Part")
+		p.Parent = f
+		p.Anchored = true
+		p.Size = Vector3.new(1,1,1)
+		p.CanCollide = false
+		p.Position = v
+	end
+
+	task.wait(3)
+
+	for i, w in path do
+		self.humanoid:MoveTo(w)
+		self.humanoid.MoveToFinished:Wait()
+	end
+
+	f:Destroy()
+end
+
+function Npc:changeState(state: string)
+	self.model.Name = state
+	self.state = state
+	--[[
+		meetHostess -- showMood
+		waitWaiter -- showMood and menu icon
+		waitOrder -- showMood and dish icon
+		eat -- showMood like a process
+		pay -- waitClient and cash icon (show rewards panel)
+	]]
+end
+
 
 function Npc:playAnimation(animation: string, timeForAction: number)
 	local animation = self.animations[animation] :: AnimationTrack
@@ -79,6 +120,7 @@ function Npc:playAnimation(animation: string, timeForAction: number)
 	-- task.wait(timeForAction or animation.Length)
 end
 
+-- roblox blending animations automatically perhaps i can delete start/loop/finish logic
 function Npc:doAction(actionName: string, timeForAction: number)
 	if self.animations[actionName .. '_start'] then
 		self:playAnimation(actionName .. '_start')
@@ -87,6 +129,9 @@ function Npc:doAction(actionName: string, timeForAction: number)
 	elseif self.animations[actionName] then
 		-- play sound
 		self:playAnimation(actionName)
+	else
+		-- task.wait(timeForAction)
+		task.wait(1)
 	end
 end
 

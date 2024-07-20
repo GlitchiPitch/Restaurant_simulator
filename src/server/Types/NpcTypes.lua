@@ -17,8 +17,22 @@ export type Npc = {
     },
 }
 
+export type AnimationConfigType = {
+	id: string,
+	weight: number,
+	-- usedItem: {
+	-- 	model: Model | BasePart,
+	-- 	attachment: ItemAttachmentType,
+	-- }?,
+}
+
+export type AnimationsConfigType = {
+	[string]: {AnimationConfigType},
+}
+
 export type Client = Npc & {
     moodLevel: Frame,
+    
 }
 
 export type Cook = Npc & {
@@ -35,13 +49,19 @@ export type Waiter = Npc & {
 
 export type Hostess = Npc
 
+export type Worker = Npc & {
+    floor: number,
+    bodyType: number,
+    pointIndex: number,
+}
+
 export type WorkerList = {
-    admin: {Npc},
-    hostess: {Npc},
-    courier: {Npc},
-    handyman: {Npc},
-    cook: {Npc},
-    waiter: {Npc},
+    handyman    : {Worker},
+    hostess     : {Worker},
+    courier     : {Worker},
+    waiter      : {Worker},
+    admin       : {Worker},
+    cook        : {Worker},
 }
 
 return true

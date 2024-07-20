@@ -32,6 +32,8 @@ function newOrder(guestCount: number, playerRecipes: playerDataTypes.Recipes, or
         spawnOrder = function()
             orderPrefab.Parent = orderPlacePoint
         end,
+
+        -- по диее это должно происходить в поваре
         addDishToBar = function(waiterPlate: Model & {Body: {Attachment}}, recipeIndex: number)            
             local dish = newDish(guestRecipes[recipeIndex])
             -- dish.PrimaryPart.Anchored = true
@@ -43,19 +45,6 @@ function newOrder(guestCount: number, playerRecipes: playerDataTypes.Recipes, or
             dish.Parent = waiterPlate.Body[recipeIndex]
             -- return dish
         end,
-        placeDishes = function(waiterPlate: Model & {Body: {Attachment}} & gameObjectTypes.UsableItem, tablePoints: {Attachment})
-            for i, dishPoint in waiterPlate.Body:GetChildren() do
-                if #dishPoint:GetChildren() > 0 then
-                    local currentDish = dishPoint:FindFirstChildOfClass('Model')
-                    local weld = dishPoint:FindFirstChildOfClass('WeldConstraint')
-                    weld:Destroy()
-                    currentDish.PrimaryPart.Anchored = true
-                    currentDish:PivotTo(tablePoints[i].WorldCFrame)
-                    currentDish.Parent = tablePoints[i]
-                end
-            end
-            waiterPlate:Destroy()
-        end
     }
 end
 
